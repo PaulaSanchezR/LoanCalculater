@@ -6,82 +6,84 @@
 
 document.getElementById("calc-loan-form").addEventListener("submit", loanRepaymentCalculator)
 
-function loanRepaymentCalculator(e){
-    
-  
+//************************** */
+//*****MAIN FUNCTION ********/
+// Function that get all the inputs and process all the calculations 
+// 
 
+function loanRepaymentCalculator(e){
+  
     const starDate= document.getElementById("starDate").value;
     const loadAmount = parseInt(document.getElementById("loadAmount").value);
     const installAmount= parseInt(document.getElementById("installAmount").value);
     const interesRate= parseFloat(document.getElementById("interesRate").value);
     const installmentInterval= document.getElementById("installmentInterval").value;
   
-        
    
-     //  Calc the total amount to pay plus the interes
-  //  let amountPlusInteres = loadAmount +( loadAmount * (interesRate/100));
-    // Cals the installAmount plus the interes
-   // let installAmountPlusInteres= installAmount + (installAmount * (interesRate/100));
-    // divided the amountPlusInteres in the installAmount provide by the customer
-  //  let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres)+1;
-      
-//** Creating the Payment Object */
-
-
         let amountPlusInteres = loadAmount +( loadAmount * (interesRate/100));
         let installAmountPlusInteres = installAmount + (installAmount * (interesRate/100));
         let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres)+1;
-        const arraypayment = [{
-                            date: '',
-                            amount: '',
-                            payment : ''
-                        }];
-        for(i=1; i<=calcAmountOfQuotes-1; i++){
-        
-            console.log("**",amountPlusInteres);
-            if (amountPlusInteres > installAmountPlusInteres){
-                amountPlusInteres = amountPlusInteres - Math.round(installAmountPlusInteres);
-                installAmountPlusInteres = installAmountPlusInteres;
-                }
-            else {
-                installAmountPlusInteres = amountPlusInteres
-                i = 10
-            }
-            arraypayment.push({ date: "02/12/2018", amount : installAmountPlusInteres, payment : installAmountPlusInteres});
-
-        }
+         // **** CREATE  ARRAYPAYMENT OBJECT ******
+        const arraypayment = createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval);  
+       
      console.log(arraypayment);
 
     console.log("quota a pagar", installAmountPlusInteres)
     console.log("total", amountPlusInteres);
     console.log("Calculo del la cantidad de quotas ", calcAmountOfQuotes)
-
-   printLoanInformation(calcAmountOfQuotes,amountPlusInteres,starDate,installAmountPlusInteres,installmentInterval);
+   //*** CALLING THE PRINTER FUNCTION */
+    printLoanInformation(arraypayment);
 
 e.preventDefault();
 }
 
 // ********************************************
+// Function that create the payment Object
+// *********************************************
+function createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval){
+    const arraypayment = [{
+        date: '',
+        payment : '',
+        amount: ''
+    }];
+     for(i=1; i<=calcAmountOfQuotes-1; i++){
+
+        console.log("**",amountPlusInteres);
+        if (amountPlusInteres > installAmountPlusInteres){
+            amountPlusInteres = amountPlusInteres - Math.round(installAmountPlusInteres);
+            installAmountPlusInteres = installAmountPlusInteres;
+        }
+        else {
+            installAmountPlusInteres = amountPlusInteres
+            i = 10
+        }
+            arraypayment.push({ date: starDate,  payment : amountPlusInteres, amount : installAmountPlusInteres});
+      }
+    return arraypayment;
+}
+
+// get the months 
+// var dts = new Date( "2019-10-15" );
+// console.log("getMonth() : " + dts.getMonth() ); 
+
+
+
+
+// ********************************************
 // Function that will print the Loan Information
 // *********************************************
-function printLoanInformation(calcAmountOfQuotes,amountPlusInteres,starDate,installAmountPlusInteres,installmentInterval){
- // Create a loop to print the information on the index.html
-
-
- console.log("quota a pagar", installAmountPlusInteres)
- console.log("total", amountPlusInteres);
- console.log("Calculo del la cantidad de quotas ", calcAmountOfQuotes)
- const theadInfo= ["QUOTA","DATE","LOAN AMOUNT","PAYMENT","INTEREST"]
+function printLoanInformation(arraypayment){
+ const theadInfo= ["DATE","LOAN AMOUNT","PAYMENT"]
  generateTableHead(theadInfo);
- generateTable(theadInfo,calcAmountOfQuotes,amountPlusInteres,starDate,installAmountPlusInteres,installmentInterval)
-
+ generateTable(theadInfo,arraypayment)
    return;
 }
 
 
-
-//*** FUNCTION TO CREATE THE TABLE HEAD */
+//**************************************** */
+//*** FUNCTIONS TO CREATE THE TABLE HEAD AND THE ROWS */
 // we pass the theadarray
+//**************************************** */
 function generateTableHead(theadInfo){
  
     let thead = table.createTHead();
@@ -99,62 +101,17 @@ function generateTableHead(theadInfo){
 }
 
 
-function generateTable(theadInfo,calcAmountOfQuotes,amountPlusInteres,starDate,installAmountPlusInteres,installmentInterval){
-    for (i=0; i < calcAmountOfQuotes; i++) {
-        let row = table.insertRow();
-        for(j=0; j < theadInfo.length; j++)  {
-            let cell = row.insertCell();
-            let text = document.createTextNode(starDate);
-            cell.appendChild(text)
-        }  
-    }
 
+function generateTable(theadInfo,arraypayment){
+    console.log(arraypayment)
+     for (let element of arraypayment) {
+         let row = table.insertRow();
+       for(key in element)  {
+    let cell = row.insertCell();
+           let text = document.createTextNode(element[key]);
+           cell.appendChild(text)
+      }  
+     }
 }
 
 
-
-// let totalAmount = 229.28;
-// let intervalPaymnet = 22.928;
-// const arraypayment = [{
-// date: '',
-// amount: '',
-// payment : ''}];
-//  for(i=1; i<=11-1; i++){
-  
-// console.log("**",totalAmount);
-// if (totalAmount > 22.928){
-// totalAmount = totalAmount - Math.round(intervalPaymnet);
-// intervalPaymnet = intervalPaymnet;
-//     }
-// else {
-//    intervalPaymnet = totalAmount
-//    i = 10
-// }
-// arraypayment.push({ date: "02/12/2018", amount : intervalPaymnet, payment : totalAmount});
-
-//  }
-
-
-
-// let totalAmount = amountPlusInteres;
-// let intervalPaymnet = installAmountPlusInteres;
-// const arraypayment = [{
-//                     date: '',
-//                     amount: '',
-//                     payment : ''
-//                 }];
-// for(i=1; i<=calcAmountOfQuotes-1; i++){
-
-//     console.log("**",totalAmount);
-//     if (totalAmount > intervalPaymnet){
-//         totalAmount = totalAmount - Math.round(intervalPaymnet);
-//         intervalPaymnet = intervalPaymnet;
-//         }
-//     else {
-//         intervalPaymnet = totalAmount
-//         i = 10
-//     }
-//     arraypayment.push({ date: "02/12/2018", amount : intervalPaymnet, payment : totalAmount});
-
-// }
-// console.log(arraypayment);
