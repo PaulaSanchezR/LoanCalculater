@@ -22,10 +22,11 @@ function loanRepaymentCalculator(e){
    
         let amountPlusInteres = loadAmount +( loadAmount * (interesRate/100));
         let installAmountPlusInteres = installAmount + (installAmount * (interesRate/100));
-        let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres)+1;
+       // let calcAmountOfQuotes = (amountPlusInteres/installAmount)+1
+        let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres);
          // **** CREATE  ARRAYPAYMENT OBJECT ******
-        const arraypayment = createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval);  
-       
+        //const arraypayment = createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval);  
+        const arraypayment = createPaymentObject(amountPlusInteres ,installAmount,calcAmountOfQuotes,starDate,installmentInterval); 
      console.log(arraypayment);
 
     console.log("quota a pagar", installAmountPlusInteres)
@@ -40,24 +41,25 @@ e.preventDefault();
 // ********************************************
 // Function that create the payment Object
 // *********************************************
-function createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval){
+//function createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval){
+    function createPaymentObject(amountPlusInteres ,installAmount,calcAmountOfQuotes,starDate,installmentInterval){  
     const arraypayment = [{
         date: '',
         payment : '',
         amount: ''
     }];
-     for(i=1; i<=calcAmountOfQuotes-1; i++){
+     for(i=0; i<calcAmountOfQuotes; i++){
 
         console.log("**",amountPlusInteres);
-        if (amountPlusInteres > installAmountPlusInteres){
-            amountPlusInteres = amountPlusInteres - Math.round(installAmountPlusInteres);
-            installAmountPlusInteres = installAmountPlusInteres;
+        if (amountPlusInteres >= installAmount){
+            amountPlusInteres = amountPlusInteres - Math.round(installAmount);
+            installAmount = installAmount;
         }
         else {
-            installAmountPlusInteres = amountPlusInteres
-            i = 10
+            installAmount = amountPlusInteres
+           // i = 10
         }
-            arraypayment.push({ date: starDate,  payment : amountPlusInteres, amount : installAmountPlusInteres});
+            arraypayment.push({ date: starDate,  payment : amountPlusInteres, amount : installAmount});
       }
     return arraypayment;
 }
