@@ -22,13 +22,16 @@ function loanRepaymentCalculator(e){
    
         let amountPlusInteres = loadAmount +( loadAmount * (interesRate/100));
         let installAmountPlusInteres = installAmount + (installAmount * (interesRate/100));
-       // let calcAmountOfQuotes = (amountPlusInteres/installAmount)+1
-        let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres);
+        let calcAmountOfQuotes = (amountPlusInteres/installAmount)
+        //let calcAmountOfQuotes= (amountPlusInteres/installAmountPlusInteres)+1;
          // **** CREATE  ARRAYPAYMENT OBJECT ******
         //const arraypayment = createPaymentObject(amountPlusInteres ,installAmountPlusInteres,calcAmountOfQuotes,starDate,installmentInterval);  
         const arraypayment = createPaymentObject(amountPlusInteres ,installAmount,calcAmountOfQuotes,starDate,installmentInterval); 
      console.log(arraypayment);
+     // Changing the date format to avoid one day off in my date
+     
 
+     
     console.log("quota a pagar", installAmountPlusInteres)
     console.log("total", amountPlusInteres);
     console.log("Calculo del la cantidad de quotas ", calcAmountOfQuotes)
@@ -47,29 +50,61 @@ e.preventDefault();
         date: '',
         payment : '',
         amount: ''
+      
     }];
-     for(i=0; i<calcAmountOfQuotes; i++){
+     for(i=1; i<=calcAmountOfQuotes; i++){
 
-        console.log("**",amountPlusInteres);
+       // console.log("**",amountPlusInteres);
         if (amountPlusInteres >= installAmount){
             amountPlusInteres = amountPlusInteres - Math.round(installAmount);
             installAmount = installAmount;
+           // let realDate = dateInterval(starDate,installmentInterval);
+           // console.log("Object realdate",realDate)
         }
         else {
             installAmount = amountPlusInteres
-           // i = 10
+           
         }
-            arraypayment.push({ date: starDate,  payment : amountPlusInteres, amount : installAmount});
+           
+            arraypayment.push({ date: dateInterval(starDate,installmentInterval,i),  payment : amountPlusInteres, amount : installAmount});
       }
     return arraypayment;
 }
 
-// get the months 
-// var dts = new Date( "2019-10-15" );
-// console.log("getMonth() : " + dts.getMonth() ); 
 
 
+// ********************************************
+// Function that will print the correct date
+// *********************************************
+function dateInterval(starDate,installmentInterval,i){
+    const myDate = new Date(starDate.replace(/-/g, '\/'));
+   console.log("entro interval", installmentInterval)
+    switch(installmentInterval){
+         case "daily":
+               myDate.setDate(myDate.getDate()+i)
+            
+         break;
 
+         case "year":
+                myDate.setMonth(myDate.getMonth()+i)
+                           
+         break; 
+     }
+
+     return pad(myDate.getMonth()) + "/" + pad(myDate.getDate()) + "/" + myDate.getFullYear() + "-" + daysOfWeek(myDate.getDay());
+}
+
+
+//*** DATE FORMAT FUNCTIONS*/
+//Pad function to add a 0 on front of the single month digit */
+function pad(n) {
+    return n<10 ? '0'+n : n;
+}
+// Print the correct day
+function daysOfWeek(day){
+    const daysArray=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return daysArray[day];
+}
 
 // ********************************************
 // Function that will print the Loan Information
@@ -115,5 +150,4 @@ function generateTable(theadInfo,arraypayment){
       }  
      }
 }
-
 
