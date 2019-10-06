@@ -32,9 +32,9 @@ function loanRepaymentCalculator(e){
      
 
      
-    console.log("quota a pagar", installAmountPlusInteres)
-    console.log("total", amountPlusInteres);
-    console.log("Calculo del la cantidad de quotas ", calcAmountOfQuotes)
+    // console.log("quota a pagar", installAmountPlusInteres)
+    // console.log("total", amountPlusInteres);
+    // console.log("Calculo del la cantidad de quotas ", calcAmountOfQuotes)
    //*** CALLING THE PRINTER FUNCTION */
     printLoanInformation(arraypayment);
 
@@ -65,7 +65,8 @@ e.preventDefault();
             installAmount = amountPlusInteres
            
         }
-           
+        
+
             arraypayment.push({ date: dateInterval(starDate,installmentInterval,i),  payment : amountPlusInteres, amount : installAmount});
       }
     return arraypayment;
@@ -76,23 +77,24 @@ e.preventDefault();
 // ********************************************
 // Function that will print the correct date
 // *********************************************
-function dateInterval(starDate,installmentInterval,i){
+function dateInterval(starDate,installmentInterval,i){  
+    // i =  increment the days or months
     const myDate = new Date(starDate.replace(/-/g, '\/'));
-   console.log("entro interval", installmentInterval)
+    let dayDate= myDate.getDate(i);
+    console.log("day with i",dayDate)
+    console.log("i==", i)
     switch(installmentInterval){
          case "daily":
-               myDate.setDate(myDate.getDate()+i)
-            
+             myDate.setDate(myDate.getDate()+i)
          break;
 
          case "year":
-                myDate.setMonth(myDate.getMonth()+i)
-                           
+            myDate.setMonth(myDate.getMonth()+i)
          break; 
      }
 
-     return pad(myDate.getMonth()) + "/" + pad(myDate.getDate()) + "/" + myDate.getFullYear() + "-" + daysOfWeek(myDate.getDay());
-}
+     return myDate;
+    }
 
 
 //*** DATE FORMAT FUNCTIONS*/
@@ -104,6 +106,26 @@ function pad(n) {
 function daysOfWeek(day){
     const daysArray=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return daysArray[day];
+}
+
+function weekenDays(myDate){
+   console.log("****inside fucntion weekday", myDate)
+    if(myDate.getDay() === 6 ){
+        myDate.setDate(myDate.getDate() + 2) ;
+        console.log("inside 5", myDate)
+    } 
+    else if(myDate.getDay() === 0 ) {
+         myDate.setDate(myDate.getDate() + 1) ;
+         console.log("inside 6", myDate)
+    }
+    else {
+        myDate.setDate(myDate.getDate())
+        console.log("else", myDate);
+        
+    }
+        
+        
+    return myDate;
 }
 
 // ********************************************
